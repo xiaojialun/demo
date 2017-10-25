@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "grpc.demo.register";
+option java_outer_classname = "RegisterProto";
+option objc_class_prefix = "Reg";
+
+package register;
+// The greeting service definition.
+service Greeter {
+    // Sends a greeting
+    rpc Register (RegisterRequest) returns (RegisterReply) {}
+}
+
+// The request message containing the user's name.
+message RegisterRequest {
+    string name = 1;
+    string username=2;
+    string password=3;
+    string tel=4;
+}
+
+// The response message containing the greetings
+message RegisterReply {
+    string message = 1;
+    bool resgister=2;
+}
