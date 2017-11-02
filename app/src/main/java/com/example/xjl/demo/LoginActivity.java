@@ -1,5 +1,6 @@
 package com.example.xjl.demo;
 
+import android.app.Application;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,7 +53,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void Login() {
-        new LoginClient(username.getText().toString(),password.getText().toString(),this);
+        CombankDroid combankDroid= (CombankDroid) getApplication();
+        new LoginClient(username.getText().toString()
+                ,password.getText().toString()
+                ,this
+                ,combankDroid);
     }
 
     private void repassword() {

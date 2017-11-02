@@ -2,9 +2,15 @@ package com.example.xjl.demo.Cilent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.xjl.demo.IndexActivity;
+import com.example.xjl.demo.RegisterActivity;
 
 import grpc.demo.register.GreeterGrpc;
 import grpc.demo.register.RegisterReply;
@@ -22,19 +28,19 @@ public class RegisterClient {
     private static final String TAG = "GrpcDemo";
     private static final int PROT = 50055;
 //    private static final String HOST = "192.168.199.157";
-    private static final String HOST = "10.0.2.2";
+//    private static final String HOST = "10.0.2.2";
+    private static final String HOST="39.108.80.242";
     private Context context;
 
-    public  RegisterClient(String name,String username,String password,String tel,Context context) {
+    public  RegisterClient(String username, String password, String tel, Context context) {
         this.context=context;
-        new GrpcTask(name,username,password,tel).execute();
+        new GrpcTask(username,password,tel).execute();
     }
 
     private class GrpcTask extends AsyncTask<Void, Void, RegisterReply> {
         private String mHost;
         private int mPort;
 
-        private String mName;
         private String mUsername;
         private String mPassword;
         private String mTel;
@@ -42,10 +48,9 @@ public class RegisterClient {
         private ManagedChannel mChannel;
 
 
-        public GrpcTask(String name,String username,String password,String tel) {
+        public GrpcTask(String username,String password,String tel) {
             this.mHost = HOST;
             this.mPort = PROT;
-            this.mName = name;
             this.mUsername=username;
             this.mPassword=password;
             this.mTel=tel;
@@ -54,7 +59,6 @@ public class RegisterClient {
         @Override
         protected void onPreExecute() {
         }
-
         @Override
         protected RegisterReply doInBackground(Void... nothing) {
             try {
@@ -63,7 +67,6 @@ public class RegisterClient {
                         .build();
                 GreeterGrpc.GreeterBlockingStub stub = GreeterGrpc.newBlockingStub(mChannel);
                 RegisterRequest message = RegisterRequest.newBuilder()
-                        .setName(mName)
                         .setUsername(mUsername)
                         .setPassword(mPassword)
                         .setTel(mTel).build();
@@ -83,6 +86,8 @@ public class RegisterClient {
         protected void onPostExecute(RegisterReply result) {
             if(result.getResgister()){
                 context.startActivity(new Intent(context,IndexActivity.class));
+            }else {
+                Toast.makeText(context, "该手机号已被注册", Toast.LENGTH_SHORT).show();
             }
             try {
                 mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);

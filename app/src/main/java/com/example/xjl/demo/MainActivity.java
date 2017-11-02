@@ -15,6 +15,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(this, LoginActivity.class));
+        CombankDroid combankDroid= (CombankDroid) getApplication();
+        if(combankDroid.isLogin){
+            startActivity(new Intent(this,IndexActivity.class));
+        }else {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
     }
 }

@@ -14,10 +14,9 @@ service Greeter {
 
 // The request message containing the user's name.
 message RegisterRequest {
-    string name = 1;
-    string username=2;
-    string password=3;
-    string tel=4;
+    string username=1;
+    string password=2;
+    string tel=3;
 }
 
 // The response message containing the greetings

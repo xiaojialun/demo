@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.xjl.demo.CombankDroid;
 import com.example.xjl.demo.IndexActivity;
 
 import grpc.demo.login.LoginGreeterGrpc;
@@ -20,12 +22,16 @@ import io.grpc.ManagedChannelBuilder;
 public class LoginClient {
     private static final String TAG = "GrpcDemo";
     private static final int PROT = 50055;
-    //    private static final String HOST = "192.168.199.157";
-    private static final String HOST = "10.0.2.2";
+//        private static final String HOST = "192.168.199.157";
+//    private static final String HOST = "10.0.2.2";
+    private static final String HOST="39.108.80.242";
     private Context context;
+    private CombankDroid combankDroid;
 
-    public  LoginClient(String username,String password,Context context) {
+    public  LoginClient(String username,String password,Context context,CombankDroid combankDroid) {
+        Log.e("Demo","1");
         this.context=context;
+        this.combankDroid=combankDroid;
         new LoginClient.GrpcTask(username,password).execute();
     }
 
@@ -51,6 +57,7 @@ public class LoginClient {
             LoginRequest request=LoginRequest.newBuilder().setUsername(mUsername)
                     .setPassword(mPassword).build();
             LoginReply reply=stub.login(request);
+            Log.e("GRPCDemo",reply.getMessage());
             return reply;
         }
 
@@ -62,7 +69,10 @@ public class LoginClient {
         @Override
         protected void onPostExecute(LoginReply reply) {
             if(reply.getLogin()){
+                combankDroid.setLogin(true);
                 context.startActivity(new Intent(context, IndexActivity.class));
+            }else {
+                Toast.makeText(context,"账号或密码错误",Toast.LENGTH_LONG).show();
             }
             Log.d("GRPCDemo",reply.getMessage());
         }
