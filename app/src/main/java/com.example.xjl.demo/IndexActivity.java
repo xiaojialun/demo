@@ -1,16 +1,27 @@
 package com.example.xjl.demo;
 
+import android.app.ActivityManager;
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,6 +41,12 @@ public class IndexActivity extends AppCompatActivity implements View.OnClickList
     private FragmentTransaction transantion;
     private List<FirstFragment> fragmentlist=new ArrayList<FirstFragment>();
     private FirstFragment f1,f2,f3;
+    private ImageView titleMenu;
+    private Toolbar TitleBar;
+    private LinearLayout addFirends_item1;
+    private View popwindow_view;
+    private ActivityManager activityManager;
+
     private String fragmentText[]=new String[]{
       "fristFragment","secondFragment","thirdFragment"
     };
@@ -37,34 +54,59 @@ public class IndexActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
-        initDatas();
+        initDatas(savedInstanceState);
         initView();
         initEvent();
         upload();
     }
 
-    private void initDatas() {
-        if(f1==null){
-            Bundle bundle = new Bundle();
-            bundle.putString(FirstFragment.FRAGTEXT, fragmentText[0]);
-            f1=new FirstFragment();
-            f1.setArguments(bundle);
+    private void initDatas(Bundle savedInstanceState) {
+        frameLayout=(FrameLayout)findViewById(R.id.fragment_container);
+        manager=getSupportFragmentManager();
+        transantion=manager.beginTransaction();
+        if(savedInstanceState!=null){
+            f1= (FirstFragment) manager.findFragmentByTag("0");
+            f2= (FirstFragment) manager.findFragmentByTag("1");
+            f3= (FirstFragment) manager.findFragmentByTag("2");
             fragmentlist.add(f1);
-        }
-        if(f2==null){
-            Bundle bundle = new Bundle();
-            bundle.putString(FirstFragment.FRAGTEXT, fragmentText[1]);
-            f2=new FirstFragment();
-            f2.setArguments(bundle);
             fragmentlist.add(f2);
-        }
-        if(f3==null){
-            Bundle bundle = new Bundle();
-            bundle.putString(FirstFragment.FRAGTEXT, fragmentText[2]);
-            f3=new FirstFragment();
-            f3.setArguments(bundle);
             fragmentlist.add(f3);
+
+        }else {
+            if(f1==null){
+                Bundle bundle = new Bundle();
+                bundle.putString(FirstFragment.FRAGTEXT, fragmentText[0]);
+                f1=new FirstFragment();
+                f1.setArguments(bundle);
+                fragmentlist.add(f1);
+            }
+            if(f2==null){
+                Bundle bundle = new Bundle();
+                bundle.putString(FirstFragment.FRAGTEXT, fragmentText[1]);
+                f2=new FirstFragment();
+                f2.setArguments(bundle);
+                fragmentlist.add(f2);
+            }
+            if(f3==null){
+                Bundle bundle = new Bundle();
+                bundle.putString(FirstFragment.FRAGTEXT, fragmentText[2]);
+                f3=new FirstFragment();
+                f3.setArguments(bundle);
+                fragmentlist.add(f3);
+            }
+
+
+            for(int i=0;i<fragmentlist.size();i++){
+                String tag=i+"";
+                transantion.add(frameLayout.getId(),fragmentlist.get(i),tag);
+            }
+            for(int i=1;i<fragmentlist.size();i++){
+                transantion.hide(fragmentlist.get(i));
+            }
+            transantion.show(fragmentlist.get(0));
+
         }
+        transantion.commit();
     }
 
     private void upload() {
@@ -76,25 +118,24 @@ public class IndexActivity extends AppCompatActivity implements View.OnClickList
         text_friends=(TextView)findViewById(R.id.text_friends);
         text_trends=(TextView)findViewById(R.id.text_trends);
         userimage=(ImageView)findViewById(R.id.userimage);
-        frameLayout=(FrameLayout)findViewById(R.id.fragment_container);
         text_message=(TextView)findViewById(R.id.text_message);
         mtitle=(TextView)findViewById(R.id.mtitle);
+        titleMenu=(ImageView)findViewById(R.id.titleMenu);
+        TitleBar=(Toolbar)findViewById(R.id.Titlebar);
+        popwindow_view=LayoutInflater.from(this).inflate(R.layout.popwindow_view,null);
+        addFirends_item1=(LinearLayout) popwindow_view.findViewById(R.id.addFriends_item1);
+
         TvList.add(mtitle);
         TvList.add(text_friends);
         TvList.add(text_trends);
         TvList.add(text_message);
-
-        manager=getSupportFragmentManager();
-        transantion=manager.beginTransaction();
-        for(int i=0;i<fragmentlist.size();i++){
-            String tag=i+"";
-            transantion.add(frameLayout.getId(),fragmentlist.get(i),tag);
+        if(!f1.isHidden()){
+            selected(R.id.text_message);
+        }else if(!f2.isHidden()){
+            selected(R.id.text_friends);
+        }else if(!f3.isHidden()){
+            selected(R.id.text_trends);
         }
-        for(int i=1;i<fragmentlist.size();i++){
-            transantion.hide(fragmentlist.get(i));
-        }
-        transantion.commit();
-        selected(R.id.text_message);
     }
 
     private void initEvent() {
@@ -102,6 +143,8 @@ public class IndexActivity extends AppCompatActivity implements View.OnClickList
         text_friends.setOnClickListener(this);
         text_trends.setOnClickListener(this);
         userimage.setOnClickListener(this);
+        titleMenu.setOnClickListener(this);
+        addFirends_item1.setOnClickListener(this);
     }
 
     @Override
@@ -125,8 +168,25 @@ public class IndexActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.userimage:
                 break;
+            case R.id.titleMenu:
+                showMent();
+                break;
+            case R.id.addFriends_item1:
+                startActivity(new Intent(this,AddFriendsActivity.class));
+                break;
         }
         transantion.commit();
+    }
+
+    private void showMent() {
+        PopupWindow popupWindow=new PopupWindow(this);
+        popupWindow.setWidth(500);
+        popupWindow.setHeight(400);
+        popupWindow.setContentView(popwindow_view);
+        popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        popupWindow.showAsDropDown(titleMenu,-420,50);
     }
 
     public void hideAllFragment(FragmentTransaction transaction){

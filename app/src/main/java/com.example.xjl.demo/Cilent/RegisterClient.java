@@ -2,19 +2,13 @@ package com.example.xjl.demo.Cilent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.xjl.demo.IndexActivity;
-import com.example.xjl.demo.RegisterActivity;
-
-import grpc.demo.register.GreeterGrpc;
-import grpc.demo.register.RegisterReply;
-import grpc.demo.register.RegisterRequest;
+import grpc.demo.Client.GreeterGrpc;
+import grpc.demo.Client.RegisterReply;
+import grpc.demo.Client.RegisterRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.io.PrintWriter;

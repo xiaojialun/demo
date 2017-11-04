@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ,password.getText().toString()
                 ,this
                 ,combankDroid);
+
     }
 
     private void repassword() {
@@ -71,5 +72,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void register() {
         Intent intent=new Intent(this,RegisterActivity.class);
         startActivity(intent);
+        this.finish();
     }
 }
