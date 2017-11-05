@@ -1,14 +1,26 @@
 package com.example.xjl.demo.Cilent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.example.xjl.demo.friendsView_fragment;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.TimeUnit;
-import grpc.demo.Client.SearchFriendGreeterGrpc;
+
+import grpc.demo.Client.GreeterGrpc;
 import grpc.demo.Client.SearchFriendReply;
 import grpc.demo.Client.SearchFriendRequest;
+import grpc.demo.Client.User;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -20,21 +32,23 @@ public class SearchFriendsClient {
     private static final String TAG = "GrpcDemo";
     private static final int PROT = 50055;
     //    private static final String HOST = "192.168.199.157";
-//    private static final String HOST = "10.0.2.2";
-    private static final String HOST="39.108.80.242";
+    private static final String HOST = "10.0.2.2";
+//    private static final String HOST="39.108.80.242";
     private Context context;
+    private LinearLayout friendView;
+    private FragmentManager fragmentManager;
 
-    public  SearchFriendsClient(Context context,String username) {
+    public  SearchFriendsClient(Context context,String username,LinearLayout friendView,FragmentManager fragmentManager) {
         this.context=context;
+        this.friendView=friendView;
+        this.fragmentManager=fragmentManager;
         new SearchFriendsClient.GrpcTask(username).execute();
     }
 
     private class GrpcTask extends AsyncTask<Void, Void, SearchFriendReply> {
         private String mHost;
         private int mPort;
-
         private String mUsername;
-
         private ManagedChannel mChannel;
 
 
@@ -53,7 +67,7 @@ public class SearchFriendsClient {
                 mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
                         .usePlaintext(true)
                         .build();
-                SearchFriendGreeterGrpc.SearchFriendGreeterBlockingStub stub = SearchFriendGreeterGrpc.newBlockingStub(mChannel);
+                GreeterGrpc.GreeterBlockingStub stub=GreeterGrpc.newBlockingStub(mChannel);
                 SearchFriendRequest message = SearchFriendRequest.newBuilder()
                         .setUsername(mUsername)
                         .build();
@@ -71,11 +85,38 @@ public class SearchFriendsClient {
 
         @Override
         protected void onPostExecute(SearchFriendReply result) {
-            if(result!=null){
-                Log.d(TAG, result.getUser().toString());
-            }else {
+            FragmentTransaction transaction=fragmentManager.beginTransaction();
+            User user=result.getUser();
+            if(!user.getUsername().equals("")){
+                Fragment fragment_friendView=new friendsView_fragment();
+                Bundle bundle=new Bundle();
+                bundle.putString(friendsView_fragment.USERNAME,user.getUsername());
+                bundle.putInt(friendsView_fragment.USERID,user.getId());
+                bundle.putString(friendsView_fragment.TEL,user.getTel());
+                fragment_friendView.setArguments(bundle);
 
+                friendView.clearAnimation();
+                if(fragmentManager.findFragmentByTag("friendView")==null){
+                    transaction.add(friendView.getId(),fragment_friendView,"friendView");
+                }else {
+                    transaction.replace(friendView.getId(),fragment_friendView,"friendView");
+                }
+
+                Log.d(TAG, result.getUser().toString());
+
+            }else {
+                if(fragmentManager.findFragmentByTag("friendView")==null){
+                    TextView tv=new TextView(context);
+                    tv.setText("用户不存在");
+                    friendView.addView(tv);
+                }else {
+                    transaction.remove(fragmentManager.findFragmentByTag("friendView"));
+                    TextView tv=new TextView(context);
+                    tv.setText("用户不存在");
+                    friendView.addView(tv);
+                }
             }
+            transaction.commit();
             try {
                 mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {

@@ -41,13 +41,14 @@ public class friendsView_fragment extends Fragment {
     }
 
     public final static String USERNAME="username";
-    public final static String FRIENDID="friendId";
-    private int friendId=0;
+    public final static String USERID="userId";
+    public final static String TEL="tel";
 
     private void initData() {
         Bundle Arguments=getArguments();
         if(Arguments!=null){
-            username.setText(Arguments.getString(USERNAME));
+            String sUsername=Arguments.getString(USERNAME);
+            username.setText(sUsername);
         }
     }
 

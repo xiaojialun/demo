@@ -4,12 +4,10 @@ package com.example.xjl.demo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.SearchView;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +27,7 @@ public class AddFriendsActivity extends AppCompatActivity implements View.OnClic
     private EditText searchFriendsTv;
     private LinearLayout friendView;
     private User mUser;
+    private FragmentManager fragmentManager=getSupportFragmentManager();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +72,7 @@ public class AddFriendsActivity extends AppCompatActivity implements View.OnClic
         if(sUsername.equals("")){
             Log.d("Search:","sUsername is null!!!!");
         }else {
-            new SearchFriendsClient(this,sUsername);
+            new SearchFriendsClient(this,sUsername,friendView,fragmentManager);
         }
     }
 

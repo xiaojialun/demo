@@ -6,11 +6,6 @@ option java_outer_classname = "ClientProto";
 option objc_class_prefix = "Client";
 
 package register;
-// The greeting service definition.
-service LoginGreeter {
-    // Sends a greeting
-    rpc Login (LoginRequest) returns (LoginReply) {}
-}
 
 // The request message containing the user's name.
 message LoginRequest {
@@ -28,6 +23,8 @@ message LoginReply {
 service Greeter {
     // Sends a greeting
     rpc Register (RegisterRequest) returns (RegisterReply) {}
+    rpc SearchFriend (SearchFriendRequest) returns (SearchFriendReply) {}
+    rpc Login (LoginRequest) returns (LoginReply) {}
 }
 
 // The request message containing the user's name.
@@ -44,9 +41,6 @@ message RegisterReply {
     bool resgister=3;
 }
 
-service SearchFriendGreeter{
-    rpc SearchFriend (SearchFriendRequest) returns (SearchFriendReply) {}
-}
 
 message SearchFriendRequest {
     string username=1;

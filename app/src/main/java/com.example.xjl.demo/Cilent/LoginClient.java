@@ -12,7 +12,7 @@ import com.example.xjl.demo.CombankDroid;
 import com.example.xjl.demo.IndexActivity;
 import com.example.xjl.demo.LoginActivity;
 
-import grpc.demo.Client.LoginGreeterGrpc;
+import grpc.demo.Client.GreeterGrpc;
 import grpc.demo.Client.LoginReply;
 import grpc.demo.Client.LoginRequest;
 import io.grpc.ManagedChannel;
@@ -56,7 +56,7 @@ public class LoginClient {
         protected LoginReply doInBackground(Void... voids) {
             mChannel= ManagedChannelBuilder.forAddress(mHost,mPort)
                     .usePlaintext(true).build();
-            LoginGreeterGrpc.LoginGreeterBlockingStub stub=LoginGreeterGrpc.newBlockingStub(mChannel);
+            GreeterGrpc.GreeterBlockingStub stub=GreeterGrpc.newBlockingStub(mChannel);
             LoginRequest request=LoginRequest.newBuilder().setUsername(mUsername)
                     .setPassword(mPassword).build();
             LoginReply reply=stub.login(request);
