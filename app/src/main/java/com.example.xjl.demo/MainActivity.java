@@ -1,8 +1,8 @@
 package com.example.xjl.demo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer.schedule(task, 1000 * 5);
+        startActivity(intent);
         this.finish();
     }
 }

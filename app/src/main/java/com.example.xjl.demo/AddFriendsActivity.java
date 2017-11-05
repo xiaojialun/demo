@@ -63,15 +63,15 @@ public class AddFriendsActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void searchFriends() {
-//        CombankDroid combankdroid=(CombankDroid)getApplication();
-//        if(combankdroid.getUser()!=null){
-//            mUser=combankdroid.getUser();
-//            String Id=mUser.getId()+"";
-//            Log.e("This User is:",mUser.getUsername()+" ,Tel is:"+mUser.getTel()+"id is"+Id);
-//        }
+        CombankDroid combankdroid=(CombankDroid)getApplication();
+        if(combankdroid.getUser()!=null){
+            mUser=combankdroid.getUser();
+            String Id=mUser.getId()+"";
+            Log.e("This User is:",mUser.getUsername()+" ,Tel is:"+mUser.getTel()+"id is"+Id);
+        }
         String sUsername=searchFriendsTv.getText().toString();
         if(sUsername.equals("")){
-
+            Log.d("Search:","sUsername is null!!!!");
         }else {
             new SearchFriendsClient(this,sUsername);
         }
